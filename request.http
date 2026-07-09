@@ -1,0 +1,343 @@
+### =========================================
+### Variables
+### =========================================
+
+@host = http://localhost:8080
+@clientId = 1
+@orderId = 1
+
+
+### =========================================
+### CLIENTS — success cases
+### =========================================
+
+### Create client — 201 Created
+POST {{host}}/api/clients
+Content-Type: application/json
+
+{
+  "name": "ООО Тестовый клиент",
+  "email": "test-client@example.com",
+  "phone": "+7-900-111-22-33"
+}
+
+
+### Get all clients — 200 OK
+GET {{host}}/api/clients
+
+
+### Get client by id — 200 OK
+GET {{host}}/api/clients/{{clientId}}
+
+
+### Update client — 200 OK
+PUT {{host}}/api/clients/{{clientId}}
+Content-Type: application/json
+
+{
+  "name": "ООО Обновленный клиент",
+  "email": "updated-client@example.com",
+  "phone": "+7-900-999-88-77"
+}
+
+
+### Delete client — 204 No Content
+### Осторожно: если у клиента есть заказы, БД может не дать удалить из-за FK.
+DELETE {{host}}/api/clients/4
+
+
+### =========================================
+### CLIENTS — validation / error cases
+### =========================================
+
+### Create client — 400 Bad Request: empty name
+POST {{host}}/api/clients
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "valid@example.com",
+  "phone": "+7-900-111-22-33"
+}
+
+
+### Create client — 400 Bad Request: invalid email
+POST {{host}}/api/clients
+Content-Type: application/json
+
+{
+  "name": "ООО Некорректный Email",
+  "email": "not-email",
+  "phone": "+7-900-111-22-33"
+}
+
+
+### Create client — 400 Bad Request: phone too long
+POST {{host}}/api/clients
+Content-Type: application/json
+
+{
+  "name": "ООО Длинный телефон",
+  "email": "long-phone@example.com",
+  "phone": "+7-900-111-22-33-44-55-66"
+}
+
+
+### Get client by id — 404 Not Found
+GET {{host}}/api/clients/999999
+
+
+### Update client — 404 Not Found
+PUT {{host}}/api/clients/999999
+Content-Type: application/json
+
+{
+  "name": "ООО Не существует",
+  "email": "not-found@example.com",
+  "phone": "+7-900-111-22-33"
+}
+
+
+### Delete client — 404 Not Found
+DELETE {{host}}/api/clients/999999
+
+
+### =========================================
+### ORDERS — success cases
+### =========================================
+
+### Create order — 201 Created
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "description": "Тестовый заказ",
+  "amount": 5000.00,
+  "status": "NEW",
+  "clientId": 1
+}
+
+
+### Get all orders — 200 OK
+GET {{host}}/api/orders
+
+
+### Get order by id — 200 OK
+GET {{host}}/api/orders/{{orderId}}
+
+
+### Update order — 200 OK
+PUT {{host}}/api/orders/{{orderId}}
+Content-Type: application/json
+
+{
+  "description": "Обновленный тестовый заказ",
+  "amount": 6500.50,
+  "status": "IN_PROGRESS",
+  "clientId": 1
+}
+
+
+### Delete order — 204 No Content
+DELETE {{host}}/api/orders/{{orderId}}
+
+
+### =========================================
+### ORDERS — filters
+### =========================================
+
+### Get orders by client id — 200 OK
+GET {{host}}/api/orders/client/1
+
+
+### Get orders by status NEW — 200 OK
+GET {{host}}/api/orders/status/NEW
+
+
+### Get orders by status IN_PROGRESS — 200 OK
+GET {{host}}/api/orders/status/IN_PROGRESS
+
+
+### Get orders by status DONE — 200 OK
+GET {{host}}/api/orders/status/DONE
+
+
+### Search orders — only status
+GET {{host}}/api/orders/search?status=NEW
+
+
+### Search orders — by client name
+GET {{host}}/api/orders/search?clientName=Рога
+
+
+### Search orders — by client email
+GET {{host}}/api/orders/search?clientEmail=roga@example.com
+
+
+### Search orders — by amount range
+GET {{host}}/api/orders/search?minAmount=1000&maxAmount=6000
+
+
+### Search orders — by date range
+GET {{host}}/api/orders/search?dateFrom=2026-06-01T00:00:00&dateTo=2026-07-01T00:00:00
+
+
+### Search orders — complex filter
+GET {{host}}/api/orders/search?status=NEW&clientName=Рога&minAmount=1000&maxAmount=6000&dateFrom=2026-06-01T00:00:00&dateTo=2026-07-01T00:00:00
+
+
+### =========================================
+### ORDERS — validation / error cases
+### =========================================
+
+### Create order — 400 Bad Request: empty description
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "description": "",
+  "amount": 5000.00,
+  "status": "NEW",
+  "clientId": 1
+}
+
+
+### Create order — 400 Bad Request: missing amount
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "description": "Заказ без суммы",
+  "status": "NEW",
+  "clientId": 1
+}
+
+
+### Create order — 400 Bad Request: amount is zero
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "description": "Заказ с нулевой суммой",
+  "amount": 0,
+  "status": "NEW",
+  "clientId": 1
+}
+
+
+### Create order — 400 Bad Request: amount is negative
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "description": "Заказ с отрицательной суммой",
+  "amount": -100.00,
+  "status": "NEW",
+  "clientId": 1
+}
+
+
+### Create order — 400 Bad Request: too many fraction digits
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "description": "Слишком много знаков после запятой",
+  "amount": 100.555,
+  "status": "NEW",
+  "clientId": 1
+}
+
+
+### Create order — 400 Bad Request: missing status
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "description": "Заказ без статуса",
+  "amount": 5000.00,
+  "clientId": 1
+}
+
+
+### Create order — 400 Bad Request: wrong status enum
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "description": "Заказ с неправильным статусом",
+  "amount": 5000.00,
+  "status": "IN_WORK",
+  "clientId": 1
+}
+
+
+### Create order — 400 Bad Request: missing clientId
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "description": "Заказ без clientId",
+  "amount": 5000.00,
+  "status": "NEW"
+}
+
+
+### Create order — 400 Bad Request: clientId does not exist
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "description": "Заказ с несуществующим клиентом",
+  "amount": 5000.00,
+  "status": "NEW",
+  "clientId": 999999
+}
+
+
+### Get order by id — 404 Not Found
+GET {{host}}/api/orders/999999
+
+
+### Update order — 404 Not Found: order does not exist
+PUT {{host}}/api/orders/999999
+Content-Type: application/json
+
+{
+  "description": "Обновление несуществующего заказа",
+  "amount": 5000.00,
+  "status": "NEW",
+  "clientId": 1
+}
+
+
+### Update order — 400 Bad Request: clientId does not exist
+PUT {{host}}/api/orders/1
+Content-Type: application/json
+
+{
+  "description": "Обновление с несуществующим клиентом",
+  "amount": 5000.00,
+  "status": "NEW",
+  "clientId": 999999
+}
+
+
+### Delete order — 404 Not Found
+DELETE {{host}}/api/orders/999999
+
+
+### Get orders by status — 400 Bad Request: wrong enum
+GET {{host}}/api/orders/status/INVALID_STATUS
+
+
+### Search orders — 400 Bad Request: wrong enum
+GET {{host}}/api/orders/search?status=INVALID_STATUS
+
+
+### Search orders — 400 Bad Request: wrong amount type
+GET {{host}}/api/orders/search?minAmount=abc
+
+
+### Search orders — 400 Bad Request: wrong date format
+GET {{host}}/api/orders/search?dateFrom=2026-06-01
