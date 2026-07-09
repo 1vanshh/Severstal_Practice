@@ -115,71 +115,18 @@ public class OrderServiceImpl implements OrderService {
             LocalDateTime dateFrom,
             LocalDateTime dateTo
     ) {
-        Specification<Order> specification = buildSearchSpecification(
-                status,
-                normalize(clientName),
-                normalize(clientEmail),
-                minAmount,
-                maxAmount,
-                dateFrom,
-                dateTo
-        );
-
-        return orderRepository.findAll(specification, Sort.by(Sort.Direction.DESC, "createdDate"))
+        return orderRepository.findAllByPredicate(
+                        status,
+                        normalize(clientName),
+                        normalize(clientEmail),
+                        minAmount,
+                        maxAmount,
+                        dateFrom,
+                        dateTo,
+                        Sort.by(Sort.Direction.DESC, "createdDate"))
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
-    }
-
-    private Specification<Order> buildSearchSpecification(
-            Status status,
-            String clientName,
-            String clientEmail,
-            BigDecimal minAmount,
-            BigDecimal maxAmount,
-            LocalDateTime dateFrom,
-            LocalDateTime dateTo
-    ) {
-        return (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            Join<Order, Client> client = root.join("client");
-
-            if (status != null) {
-                predicates.add(criteriaBuilder.equal(root.get("status"), status));
-            }
-
-            if (clientName != null) {
-                predicates.add(criteriaBuilder.like(
-                        criteriaBuilder.lower(client.get("name")),
-                        "%" + clientName.toLowerCase(Locale.ROOT) + "%"
-                ));
-            }
-
-            if (clientEmail != null) {
-                predicates.add(criteriaBuilder.equal(
-                        criteriaBuilder.lower(client.get("email")),
-                        clientEmail.toLowerCase(Locale.ROOT)
-                ));
-            }
-
-            if (minAmount != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("amount"), minAmount));
-            }
-
-            if (maxAmount != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("amount"), maxAmount));
-            }
-
-            if (dateFrom != null) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdDate"), dateFrom));
-            }
-
-            if (dateTo != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdDate"), dateTo));
-            }
-
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
     }
 
     private Order getOrderEntityById(Long id) {
