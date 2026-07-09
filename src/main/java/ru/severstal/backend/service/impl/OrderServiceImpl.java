@@ -1,4 +1,4 @@
-package ru.severstal.backend.service;
+package ru.severstal.backend.service.impl;
 
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
@@ -16,6 +16,7 @@ import ru.severstal.backend.exception.BadRequestException;
 import ru.severstal.backend.exception.NotFoundException;
 import ru.severstal.backend.repository.ClientRepository;
 import ru.severstal.backend.repository.OrderRepository;
+import ru.severstal.backend.service.OrderService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,12 +34,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse create(OrderRequest request) {
-        Client client = getClientForOrderRequest(request.getClientId());
+        Client client = getClientForOrderRequest(request.clientId());
 
         Order order = new Order();
-        order.setDescription(request.getDescription());
-        order.setAmount(request.getAmount());
-        order.setStatus(request.getStatus());
+        order.setDescription(request.description());
+        order.setAmount(request.amount());
+        order.setStatus(request.status());
         order.setClient(client);
 
         Order savedOrder = orderRepository.save(order);
@@ -65,11 +66,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponse update(Long id, OrderRequest request) {
         Order order = getOrderEntityById(id);
-        Client client = getClientForOrderRequest(request.getClientId());
+        Client client = getClientForOrderRequest(request.clientId());
 
-        order.setDescription(request.getDescription());
-        order.setAmount(request.getAmount());
-        order.setStatus(request.getStatus());
+        order.setDescription(request.description());
+        order.setAmount(request.amount());
+        order.setStatus(request.status());
         order.setClient(client);
 
         Order updatedOrder = orderRepository.save(order);

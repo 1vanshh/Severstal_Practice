@@ -1,4 +1,4 @@
-package ru.severstal.backend.service;
+package ru.severstal.backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
@@ -9,6 +9,7 @@ import ru.severstal.backend.dto.response.ClientResponse;
 import ru.severstal.backend.entity.Client;
 import ru.severstal.backend.exception.NotFoundException;
 import ru.severstal.backend.repository.ClientRepository;
+import ru.severstal.backend.service.ClientService;
 
 import java.util.List;
 
@@ -22,9 +23,9 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientResponse create(ClientRequest request) {
         Client client = new Client();
-        client.setName(request.getName());
-        client.setEmail(request.getEmail());
-        client.setPhoneNumber(request.getPhone());
+        client.setName(request.name());
+        client.setEmail(request.email());
+        client.setPhoneNumber(request.phone());
 
         Client savedClient = clientRepository.save(client);
 
@@ -51,9 +52,9 @@ public class ClientServiceImpl implements ClientService {
     public ClientResponse update(Long id, ClientRequest request) {
         Client client = getClientEntityById(id);
 
-        client.setName(request.getName());
-        client.setEmail(request.getEmail());
-        client.setPhoneNumber(request.getPhone());
+        client.setName(request.name());
+        client.setEmail(request.email());
+        client.setPhoneNumber(request.phone());
 
         Client updatedClient = clientRepository.save(client);
 

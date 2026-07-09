@@ -1,29 +1,23 @@
 package ru.severstal.backend.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import ru.severstal.backend.enums.Status;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class OrderResponse {
+public record OrderResponse (
 
-    private Long id;
+    Long id,
 
-    private String description;
+    String description,
 
-    private BigDecimal amount;
+    BigDecimal amount,
 
-    private Status status;
+    Status status,
 
-    private LocalDateTime createdDate;
+    LocalDateTime createdDate,
 
-    private String clientName;
-}
+    String clientName
+) {}

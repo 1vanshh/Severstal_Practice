@@ -3,10 +3,7 @@ package ru.severstal.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 @Table(name = "clients")
 @Entity
 public class Client {

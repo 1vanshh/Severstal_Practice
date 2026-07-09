@@ -1,21 +1,15 @@
 package ru.severstal.backend.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ClientResponse {
+public record ClientResponse (
 
-    private Long id;
+    Long id,
 
-    private String name;
+    String name,
 
-    private String email;
+    String email,
 
-    private String phone;
-}
+    String phone
+) {}

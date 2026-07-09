@@ -1,24 +1,22 @@
 package ru.severstal.backend.dto.response;
 
 import lombok.Builder;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@Getter
 @Builder
-public class ErrorResponse {
+public record ErrorResponse (
 
-    private LocalDateTime timestamp;
+    LocalDateTime timestamp,
 
-    private int status;
+    int status,
 
-    private String error;
+    String error,
 
-    private String message;
+    String message,
 
-    private String path;
+    String path,
 
-    private Map<String, String> validationErrors;
-}
+    Map<String, String> validationErrors
+) {}
